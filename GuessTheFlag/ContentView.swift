@@ -18,7 +18,6 @@ struct ContentView: View {
     
     @State private var score = 0
     @State private var turn = 1
-    @State private var visibleTurn = 1
     
     @State private var showingFinalScore = false
     @State private var finalScoreTitle = ""
@@ -69,7 +68,7 @@ struct ContentView: View {
                 Spacer()
                 
                 VStack {
-                    Text("Turn: \(visibleTurn)/8")
+                    Text("Turn: \(turn)/8")
                         .foregroundColor(.white)
                     
                     Text("Score: \(score)")
@@ -114,9 +113,7 @@ struct ContentView: View {
                         """
         }
         
-        turn += 1
-        
-        if turn > 8 {
+        if turn == 8 {
             finalScoreTitle = "Game Over"
             finalScoreMessage = "Your final score is \(score)."
             
@@ -129,7 +126,7 @@ struct ContentView: View {
     func continueGame() {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
-        visibleTurn += 1
+        turn += 1
     }
     
     func restartGame() {
@@ -137,7 +134,6 @@ struct ContentView: View {
         score = 0
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
-        visibleTurn = 1
     }
     
 }
