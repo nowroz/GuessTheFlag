@@ -23,6 +23,10 @@ struct ContentView: View {
     @State private var finalScoreTitle = ""
     @State private var finalScoreMessage = ""
     
+    @State private var spinFlags = Array(repeating: false, count: 3)
+    @State private var fadeFlags = Array(repeating: false, count: 3)
+    @State private var scaleFlags = Array(repeating: false, count: 3)
+    
     var body: some View {
         ZStack {
             RadialGradient(gradient: Gradient(stops: [
@@ -51,11 +55,28 @@ struct ContentView: View {
                     ForEach(0..<3) { number in
                         Button {
                             flagTapped(number)
+                            
+                            withAnimation(.easeIn(duration: 0.5)) {
+                                spinFlags[number] = true
+                                
+                                for i in 0..<fadeFlags.count {
+                                    if i != number {
+                                        fadeFlags[i] = true
+                                        scaleFlags[i] = true
+                                    }
+                                }
+                            }
                         } label: {
                             Image(countries[number])
                                 .renderingMode(.original)
                                 .clipShape(RoundedRectangle(cornerRadius: 30))
                                 .shadow(radius: 5)
+                                .opacity(fadeFlags[number] ? 0.5 : 1.0)
+                                .scaleEffect(scaleFlags[number] ? 0.5 : 1.0)
+                                .rotation3DEffect(
+                                    .degrees(spinFlags[number] ? 360 : 0),
+                                    axis: (x:0, y: 1, z: 0)
+                                )
                         }
                     }
                 }
@@ -127,6 +148,7 @@ struct ContentView: View {
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
         turn += 1
+        resetFlags()
     }
     
     func restartGame() {
@@ -134,6 +156,14 @@ struct ContentView: View {
         score = 0
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
+        resetFlags()
+    }
+    
+    func resetFlags() {
+        spinFlags = Array(repeating: false, count: 3)
+        fadeFlags = Array(repeating: false, count: 3)
+        scaleFlags = Array(repeating: false, count: 3)
+        
     }
     
 }
